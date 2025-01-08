@@ -6,24 +6,33 @@
 #define size 15 //setting size of a side of square board
 
 using namespace std;
-
+                                        //To do: 1) Fix zero auto filler (line 31) 2) Write normal roles (line 67)
 int boardHidden[size][size];
 char boardShown[size][size];
 int row;
 int column;
 bool value = true;
 
-bool Game(int x, int y){ //checking if player stepped on a bomb
-    system("cls");
+void Game(int x, int y){ //checking if player stepped on a bomb
+    if(x < 0 || y < 0){ //checking for eventual negative coordinates
+        return;
+    }
     if(boardHidden[x][y] < 0){
         boardShown[x][y] = 'x';
-        return false;
+        value = false;
     }
     else{
         switch (boardHidden[x][y])
         {
         case 0:
             boardShown[x][y] = '0';
+            /*for(int i = -1; i < 2; i++){
+                for(int j = -1; j < 2; j++){
+                    if(i != 0 && j != 0 && boardShown[x + i][y + j] == ' '){ //FIX THE ZERO AUTO FILLER PROBLEM
+                        Game(x + i, y + j);
+                    }
+                }
+            }*/
             break;
         case 1:
             boardShown[x][y] = '1';
@@ -50,14 +59,15 @@ bool Game(int x, int y){ //checking if player stepped on a bomb
             boardShown[x][y] = '8';
             break;
         }
-        return true;
+        value = true;
     }
+    return;
 }
 
-void rules(){ //sefl explanatory
+void rules(){ //self explanatory
     cout<<"-=-=-=-=-=-=-=-=-=-=-=-"<<endl;
     cout<<"Rules:"<<endl;
-    cout<<"You are suppose to give integer values and only in "<<size<<" range, anyway, you are not stupid find out yourself"<<endl;
+    cout<<"You are supposed to give integer values and only in "<<size<<" range, anyways, you are not stupid, figure it out yourself"<<endl;
     cout<<"-=-=-=-=-=-=-=-=-=-=-=-"<<endl;
     system("pause");
     system("cls");
@@ -92,12 +102,13 @@ void clearingshownboard(){ //generates clear board
             boardShown[i][j] = ' ';
         }
     }
+    return;
 }
 
-void generatingboard() { //generates accual and hidden board
+void generatingboard(int banedI, int banedJ) { //generates accual and hidden board
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            if (rand() % 100 + 1 <= chance)
+            if (rand() % 100 + 1 <= chance && banedI != i && banedJ != j)
                 boardHidden[i][j] = -9;
             else
                 boardHidden[i][j] = 0;
@@ -116,6 +127,7 @@ void generatingboard() { //generates accual and hidden board
             }
         }
     }
+    return;
 }
 
 void boardsExposer() { //expose whole board with all fields already shown, only for debug
@@ -134,30 +146,41 @@ void boardsExposer() { //expose whole board with all fields already shown, only 
 }
 
 void ShowBoard(){ //self explanatory
-    cout<<endl;
+    cout<<endl<<"   ";
+    for(int i = 0; i < size; i++){
+        (i > 8)? cout<<i+1<<" ":cout<<" "<<i+1<<" "; //if you finding this segment ugly, I understend you
+    }
+    cout<<"column"<<endl;
     for (int i = 0; i < size; i++) {
+        (i > 8)? cout<<i+1<<"| " : cout<<i+1<<" | ";
         for (int j = 0; j < size; j++) {   
-            cout<<"| "<< boardShown[i][j]<<"|";
+            cout<<boardShown[i][j]<<"| ";
         }
         cout<<endl;
     }
+    cout<<"row"<<endl<<endl;
+    return;
 }
 
 int main() {
     rules();
     Sleep(200);
     srand(time(NULL));
-    generatingboard();
     clearingshownboard();
-    //boardsExposer(); //only for debug
-    while(value){
-        ShowBoard();
-        askForLocationToCheck();
-        value = Game(row - 1, column - 1);        
-    }
     ShowBoard();
+    askForLocationToCheck();
+    Game(row - 1, column - 1);        
+    system("cls");
+    generatingboard(row - 1, column - 1);
+    //boardsExposer(); //only for debug
+    ShowBoard();
+    while(value){
+        askForLocationToCheck();
+        system("cls");
+        Game(row - 1, column - 1);        
+        ShowBoard();
+    }
     cout<<"Unfortunatle, you steped on a bomb"<<endl;
     system("pause");
-    system("cls");
     return 0;
 }
