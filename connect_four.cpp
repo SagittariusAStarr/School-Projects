@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
+#include <string>
 
 #define NumberOfColumns 7
 #define NumberOfRows 6
@@ -72,68 +73,59 @@ bool PutCoinsInBoard(){
     return true;
 }
 
-//TO DO: Finish CheckForWin because... it's... kinda working... but... accualy no
 int CheckForWin(int r, int c){ 
     r--;
     c--;
+    int x = r;
+    int y = c;
     int stack = 0;
-    for(int i = -3; i < 4; i++){
-        if(stack == 4){
-            return 1;
-        }
-        if(r + i > -1 && r + i < NumberOfRows){
-            if(Board[r - i][c] == character){
-                stack++;
-            }
-            else{
-                stack = 0;
-            }
-        }
+    for(int i = 0; i < NumberOfColumns; i++){
+        if(Board[r][i] == character) stack++;
+        else stack = 0;
+        if(stack == 4) return 1;
     }
     stack = 0;
-    for(int i = -3; i < 4; i++){
-        if(stack == 4){
-            return 1;
-        }
-        if(r + i > -1 && r + i < NumberOfRows){
-            if(Board[r][c + i] == character){
-                stack++;
-            }
-            else{
-                stack = 0;
-            }
-        }
+    for(int i = NumberOfRows - 1; i >= 0; i--){
+        if(Board[i][c] == character) stack++;
+        else stack = 0;
+        if(stack == 4) return 1;
     }
     stack = 0;
-    for(int i = -3; i < 4; i++){
-        if(stack == 4){
-            return 1;
-        }
-        if(r + i > -1 && r + i < NumberOfRows && c + i > -1 && c + i < NumberOfColumns){
-            if(Board[r + i][c + i] == character){
-                stack++;
-            }
-            else{
-                stack = 0;
-            }
-        }
+    while(true){
+        if(x == 0 || y == 0) break;
+        x--;
+        y--;
+    }
+    while(x != NumberOfRows && y != NumberOfColumns){
+        if(Board[x][y] == character) stack++;
+        else stack = 0;
+        if(stack == 4) return 1;
+        x++;
+        y++;
     }
     stack = 0;
-    for(int i = -3; i < 4; i++){
-        if(stack == 4){
-            return 1;
-        }
-        if(r + i > -1 && r + i < NumberOfRows && c + i > -1 && c + i < NumberOfColumns){
-            if(Board[r - i][c + i] == character){
-                stack++;
-            }
-            else{
-                stack = 0;
-            }
-        }
+    x = r;
+    y = c;
+    while(true){
+        if(x == NumberOfRows || y == 0) break;
+        x++;
+        y--;
     }
-    stack = 0;
+    while(x != 0 && y != NumberOfColumns){
+        if(Board[x][y] == character) stack++;
+        else stack = 0;
+        if(stack == 4) return 1;
+        x--;
+        y++;
+    }
     return 0;
+}
+
+void EndingMessage(){
+    cout<<endl<<"-=-=-=-=-=-=-=-=-"<<endl;
+    cout<<(turn == 1 ? "O":"X")<<" has won"<<endl;
+    cout<<"-=-=-=-=-=-=-=-=-"<<endl;
+    return;
 }
 
 int main(){
@@ -155,7 +147,8 @@ int main(){
         }
     }
     system("cls");
-    cout<<(turn == 1 ? "O":"X")<<" has won"<<endl;
+    DisplayBoard();
+    EndingMessage();
     system("pause");
     return 0;
 }
