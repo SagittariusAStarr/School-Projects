@@ -1,7 +1,18 @@
+/*I forgot to add comms, therefore good luck finding out what is what
+or not 'couse it is accualy simple code and project I guess (ofc if I didn't fucked it up somewhere)
+but it's working, I guess (I should stop overuse "I guess")
+*/
+
+/*To do:
+1) Bug #1 when someone put char insted of int when choosing column, 
+game crashes (obviusly, 'couse I'm dump and forgor about that), I suppose
+2) Add marker to show where four has been connected
+*/
+
 #include <iostream>
-#include <stdlib.h>
-#include <time.h>
 #include <string>
+#include <conio.h>
+#include <windows.h>
 
 #define NumberOfColumns 7
 #define NumberOfRows 6
@@ -12,6 +23,7 @@ string Board[NumberOfRows][NumberOfColumns];
 int row;
 int column;
 int turn;
+char choice;
 string character;
 bool ValueForInnerWhile = true;
 
@@ -21,6 +33,33 @@ void FillBoardWithEmptySlots(){
             Board[i][j] = " ";
         }
     }
+    return;
+}
+
+void Menu(){
+    bool boolean = true;
+    while(boolean){
+        system("cls");
+        cout<<"-=-=-=-<MENU>-=-=-=-"<<endl;
+        cout<<'\t'<<"1) Play"<<endl;
+        cout<<'\t'<<"2) Exit"<<endl;
+        cout<<"-=-=-=-=-><-=-=-=-=-"<<endl;
+        choice = getch();
+        switch(choice){
+            case '1':
+                boolean = false;
+                break;
+            case '2':
+                exit(0);
+                break;
+            default:
+                cout<<"You stupid, did I by mistake or fuckin' with me?"<<endl<<"Choose again";
+                Sleep(1000);
+                system("cls");
+                break;
+        }
+    }
+    system("cls");
     return;
 }
 
@@ -129,26 +168,27 @@ void EndingMessage(){
 }
 
 int main(){
-    system("pause");
-    system("cls");
-    DrowWhoStartsFirst();
-    FillBoardWithEmptySlots();
-    DisplayBoard();
     while(true){
-        while(ValueForInnerWhile){
-            PlayerChoice();
-            system("cls");
-            ValueForInnerWhile = PutCoinsInBoard();
-            DisplayBoard();
+        Menu();
+        DrowWhoStartsFirst();
+        FillBoardWithEmptySlots();
+        DisplayBoard();
+        while(true){
+            while(ValueForInnerWhile){
+                PlayerChoice();
+                system("cls");
+                ValueForInnerWhile = PutCoinsInBoard();
+                DisplayBoard();
+            }
+            ValueForInnerWhile = true;
+            if(CheckForWin(row, column) == 1){
+                break;
+            }
         }
-        ValueForInnerWhile = true;
-        if(CheckForWin(row, column) == 1){
-            break;
-        }
+        system("cls");
+        DisplayBoard();
+        EndingMessage();
+        system("pause");
     }
-    system("cls");
-    DisplayBoard();
-    EndingMessage();
-    system("pause");
     return 0;
 }
