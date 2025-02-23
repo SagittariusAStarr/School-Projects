@@ -3,8 +3,8 @@ or not 'couse it is accualy simple code and project I guess (ofc if I didn't fuc
 but it's working, I guess (I should stop overuse "I guess")
 */
 
-/*To do:
-1) Bug #1 when someone put char insted of int when choosing column, 
+/*EDIT: 1 To do:
+(DONE)Bug #1 when someone put char insted of int when choosing column, 
 game crashes (obviusly, 'couse I'm dump and forgor about that), I suppose
 2) Add marker to show where four has been connected
 */
@@ -19,12 +19,9 @@ game crashes (obviusly, 'couse I'm dump and forgor about that), I suppose
 
 using namespace std;
 
-string Board[NumberOfRows][NumberOfColumns];
-int row;
-int column;
-int turn;
+string Board[NumberOfRows][NumberOfColumns], character;
+int row, column, turn;
 char choice;
-string character;
 bool ValueForInnerWhile = true;
 
 void FillBoardWithEmptySlots(){
@@ -87,7 +84,17 @@ void DrowWhoStartsFirst(){
 
 void PlayerChoice(){
     cout<<"Its "<<(turn == 1 ? "X":"O")<<" turn, choose which column you want to put your coin"<<endl;
-    cin>>column;
+    if(!(cin>>column)){
+        cin.clear();
+        cin.ignore(INT_MAX, '\n'); 
+        /*Previous 2 lines clears input, idk how exacly, but its work and 
+        Stack Overflow said so, therefore I wont ask questions, I suppose */
+        system("cls");
+        DisplayBoard();
+        cout<<"Wrong type, insert integer"<<endl;
+        PlayerChoice();
+        return;
+    }
     if(column > NumberOfColumns || column < 1){
         system("cls");
         DisplayBoard();
