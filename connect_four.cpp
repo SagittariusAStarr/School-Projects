@@ -9,7 +9,8 @@ EDIT: 2 To do:
 (DONE)Bug #1 when someone put char insted of int when choosing column, 
 game crashes (obviusly, 'couse I'm dump and forgor about that), I suppose
 (DONE) Add marker to show where four has been connected
-(IDEA) Add settings with board customisation
+(DONE) Add settings with board customisation
+(IDEA) Add something that can detect when board is full an settle draw
 */
 
 
@@ -18,15 +19,15 @@ game crashes (obviusly, 'couse I'm dump and forgor about that), I suppose
 #include <conio.h>
 #include <windows.h>
 
-#define NumberOfColumns 7
-#define NumberOfRows 6
+#define NumberOfColumnsS 15
+#define NumberOfRowsS 20
 
 using namespace std;
 
-string Board[NumberOfRows][NumberOfColumns], character;
-int row, column, turn;
+string Board[NumberOfRowsS][NumberOfColumnsS], character;
+int row, column, turn, onoff, NumberOfRows = 6, NumberOfColumns = 7, intHolder;
 char choice;
-bool ValueForInnerWhile = true;
+bool ValueForInnerWhile = true, boolean1;
 
 void FillBoardWithEmptySlots(){
     for(int i = 0; i < NumberOfRows; i++){
@@ -38,23 +39,31 @@ void FillBoardWithEmptySlots(){
 }
 
 void Menu(){
-    bool boolean = true;
-    while(boolean){
+    system("cls");
+    boolean1 = true;
+    onoff = 0;
+    while(boolean1){
         system("cls");
         cout<<"-=-=-=-<MENU>-=-=-=-"<<endl;
         cout<<'\t'<<"1) Play"<<endl;
-        cout<<'\t'<<"2) Exit"<<endl;
+        cout<<'\t'<<"2) Settings"<<endl;
+        cout<<'\t'<<"3) Exit game"<<endl;
         cout<<"-=-=-=-=-><-=-=-=-=-"<<endl;
         choice = getch();
         switch(choice){
             case '1':
-                boolean = false;
+                boolean1 = false;
+                onoff = 1;
                 break;
             case '2':
+                boolean1 = false;
+                onoff = 2;
+                break;
+            case '3':
                 exit(0);
                 break;
             default:
-                cout<<"You stupid, did I by mistake or fuckin' with me?"<<endl<<"Choose again";
+                cout<<"You stupid, did it by mistake or fuckin' with me?"<<endl<<"Choose again";
                 Sleep(1000);
                 system("cls");
                 break;
@@ -62,6 +71,40 @@ void Menu(){
     }
     system("cls");
     return;
+}
+
+void SettingsMenu(){
+    system("cls");
+    boolean1 = true;
+    onoff = 0;
+    while(boolean1){
+        system("cls");
+        cout<<"-=-=-=-=-<SETTINGS>-=-=-=-=-"<<endl;
+        cout<<'\t'<<"1) Change max row number"<<endl;
+        cout<<'\t'<<"2) Change max column number"<<endl;
+        cout<<'\t'<<"3) Exit settings"<<endl;
+        cout<<"-=-=-=-=-=-=-><-=-=-=-=-=-=-"<<endl;
+        choice = getch();
+        switch(choice){
+            case '1':
+                boolean1 = false;
+                onoff = 1;
+                break;
+            case '2':
+                boolean1 = false;
+                onoff = 2;
+                break;
+            case '3':
+                boolean1 = false;
+                onoff = 3;
+                break;
+            default:
+                cout<<"You stupid, did it by mistake or fuckin' with me?"<<endl<<"Choose again";
+                Sleep(1000);
+                system("cls");
+                break;
+        }
+    }
 }
 
 void DisplayBoard(){
@@ -242,28 +285,108 @@ void EndingMessage(){
     return;
 }
 
+void SetMaxColumn(){
+    system("cls");
+    cout<<"-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"<<endl;
+    cout<<"\t Set max column number (range: 4-9, current: "<<NumberOfColumns<<"): ";
+    if(!(cin>>intHolder)){
+        cin.clear();
+        cin.ignore(INT_MAX, '\n');
+        cout<<endl<<"-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"<<endl;
+        cout<<"Wrong variability";
+        Sleep(1500);
+        return;
+    }
+    cout<<endl<<"-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"<<endl;
+    if(intHolder >= 4 && intHolder <= 9){
+        NumberOfColumns = intHolder;
+        cout<<"Successfuly changed max column number to "<<NumberOfColumns<<endl;
+        system("pause");
+    }
+    else{
+        cout<<"Out of range"<<endl;
+        system("pause");
+    }
+    return;
+}
+
+void SetMaxRow(){
+    system("cls");
+    cout<<"-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"<<endl;
+    cout<<"\t Set max row number (range 4-20, current: "<<NumberOfRows<<"): ";
+    if(!(cin>>intHolder)){
+        cin.clear();
+        cin.ignore(INT_MAX, '\n');
+        cout<<endl<<"-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"<<endl;
+        cout<<"Wrong variability";
+        Sleep(1500);
+        return;
+    }
+    cout<<endl<<"-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"<<endl;
+    if(intHolder >= 4 && intHolder <= 20){
+        NumberOfRows = intHolder;
+        cout<<"Successfuly changed max row number to "<<NumberOfRows<<endl;
+        system("pause");
+    }
+    else{
+        cout<<"Out of range"<<endl;
+        system("pause");
+    }
+    return;
+}
+
 int main(){
     while(true){
         Menu();
-        DrowWhoStartsFirst();
-        FillBoardWithEmptySlots();
-        DisplayBoard();
-        while(true){
-            while(ValueForInnerWhile){
-                PlayerChoice();
-                system("cls");
-                ValueForInnerWhile = PutCoinsInBoard();
-                DisplayBoard();
+        if(onoff == 1){
+            DrowWhoStartsFirst();
+            FillBoardWithEmptySlots();
+            DisplayBoard();
+            while(true){
+                while(ValueForInnerWhile){
+                    PlayerChoice();
+                    system("cls");
+                    ValueForInnerWhile = PutCoinsInBoard();
+                    DisplayBoard();
+                }
+                ValueForInnerWhile = true;
+                if(CheckForWin(row, column) == 1){
+                    break;
+                }
             }
-            ValueForInnerWhile = true;
-            if(CheckForWin(row, column) == 1){
-                break;
+            system("cls");
+            DisplayBoard();
+            EndingMessage();
+            system("pause");
+        }
+        else if(onoff == 2){
+            while(true){
+                SettingsMenu();
+                if(onoff == 1){
+                    system("cls");
+                    SetMaxRow();
+                }
+                else if(onoff == 2){
+                    system("cls");
+                    SetMaxColumn();
+                }
+                else if(onoff == 3){
+                    break;
+                }
+                else{
+                    system("cls");
+                    cout<<"Something went wrong"<<endl;
+                    Sleep(2500);
+                    system("cls");
+                }
             }
         }
-        system("cls");
-        DisplayBoard();
-        EndingMessage();
-        system("pause");
+        else{
+            system("cls");
+            cout<<"Something went wrong"<<endl;
+            Sleep(2500);
+            system("cls");
+        }
     }
     return 0;
 }
